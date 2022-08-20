@@ -1,7 +1,0 @@
-.leaflet-container {
-    height: 100%;
-}
-
-.leaflet-layer {
-    transition: opacity .3s ease;
-}
