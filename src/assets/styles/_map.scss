@@ -27,3 +27,29 @@
         padding: 0 1rem;
     }
 }
+
+.leaflet-container {
+    transition: filter 0.5s ease;
+}
+
+.leaflet-control {
+    display: none;
+}
+
+.route-line-light {
+    stroke: #282828;
+}
+
+.route-line-dark {
+    stroke: #fefefe;
+}
+
+@media (prefers-color-scheme: dark) {
+    .leaflet-container {
+        filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+    }
+
+    .leaflet-marker-icon {
+        filter: brightness(1) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(1   );
+    }
+}
