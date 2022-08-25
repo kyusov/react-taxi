@@ -1,7 +1,7 @@
 import L, { Icon, LatLng, LatLngBounds, LatLngTuple, Marker } from 'leaflet'
 import { useEffect, useState } from 'react'
 import { MapContainer, TileLayer, useMap } from 'react-leaflet'
-import { Input, Tariff } from './components'
+import { Button, Input, Modal, Tariff } from './components'
 import 'leaflet-routing-machine'
 
 import { finishIcon, finishIconDark, startIcon, startIconDark } from './Icons'
@@ -11,16 +11,26 @@ function App() {
 	const [fromCoords, setFromCoords] = useState<number[]>([])
 	const [toCoords, setToCoords] = useState<number[]>([])
 	const [route, setRoute] = useState<L.Routing.Control>()
+	const [distance, setDistance] = useState(0)
+	const [isDisabledOrderButton, setIsDisabledOrderButton] = useState(true)
+	const [showModal, setShowModal] = useState(false)
+
 	const colorScheme = useColorScheme()
 
+	const modalHandler = () => {
+		setShowModal(false)
+	}
+
 	const selectedStartPlace = (place: string, coords: number[]) => {
-		console.log('place:', place, 'coords:', coords)
 		setFromCoords(coords)
+		setDistance(0)
+		setIsDisabledOrderButton(true)
 	}
 
 	const selectedFinishPlace = (place: string, coords: number[]) => {
-		console.log('place:', place, 'coords:', coords)
 		setToCoords(coords)
+		setDistance(0)
+		setIsDisabledOrderButton(true)
 	}
 
 	const createLeafletIcon = (coords: LatLng, isDark: boolean, start: boolean): Marker => {
@@ -36,7 +46,7 @@ function App() {
 
 		return new Marker(coords, {
 			icon: new Icon({
-				iconUrl: start ? startIconDark: finishIconDark,
+				iconUrl: start ? startIconDark : finishIconDark,
 				iconAnchor: [16, 16],
 				iconSize: [32, 32],
 			}),
@@ -96,6 +106,11 @@ function App() {
 						}),
 					})
 
+					routeControl.on('routesfound', (e) => {
+						setDistance(e.routes[0].summary.totalDistance / 1000)
+						setIsDisabledOrderButton(false)
+					})
+
 					setRoute(routeControl)
 					routeControl.addTo(map)
 				}
@@ -107,6 +122,7 @@ function App() {
 
 	return (
 		<div className="app">
+			<Modal closeBtnClick={modalHandler} isActive={showModal} />
 			<div className="map">
 				<div className="map__container">
 					<MapContainer
@@ -114,7 +130,6 @@ function App() {
 						zoom={13}
 						attributionControl={false}
 						fadeAnimation={true}
-						// minZoom={9}
 						maxZoom={17}
 						zoomControl={false}
 						zoomAnimation={true}
@@ -126,10 +141,13 @@ function App() {
 				</div>
 				<div className="map__control">
 					<div className="map__inputs">
-						<Input selectedPlace={selectedStartPlace} />
-						<Input selectedPlace={selectedFinishPlace} />
+						<Input placeholder="Откуда" selectedPlace={selectedStartPlace} />
+						<Input placeholder="Куда" selectedPlace={selectedFinishPlace} />
 					</div>
-					<Tariff activeElement={0} />
+					<Tariff activeElement={0} distance={distance} />
+					<div className="map__order-btn">
+						<Button disabled={isDisabledOrderButton} onClick={() => setShowModal(true)} text="Заказать" />
+					</div>
 				</div>
 			</div>
 		</div>

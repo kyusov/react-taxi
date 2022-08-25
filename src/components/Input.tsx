@@ -26,10 +26,11 @@ interface Place {
 }
 
 interface InputProps {
+	placeholder: string
 	selectedPlace: (place: string, coords: number[]) => void
 }
 
-const Input: FC<InputProps> = ({ selectedPlace }) => {
+const Input: FC<InputProps> = ({ selectedPlace, placeholder }) => {
 	const [isLoading, setIsLoading] = useState(false)
 	const [showSuggestions, setShowSuggestions] = useState(false)
 	const [suggestionValue, setSuggestionValue] = useState('')
@@ -40,7 +41,6 @@ const Input: FC<InputProps> = ({ selectedPlace }) => {
 	const debouncedSearchTerm = useDebounce(value, 800)
 
 	useEffect(() => {
-		console.log('debouncedSearchTerm', debouncedSearchTerm)
 		if (debouncedSearchTerm !== '') {
 			setIsLoading(true)
 			getPlaces(debouncedSearchTerm)
@@ -75,6 +75,7 @@ const Input: FC<InputProps> = ({ selectedPlace }) => {
 				}}
 				onChange={inputHandler}
 				value={suggestionValue}
+				placeholder={placeholder}
 			/>
 			<div className={`search__results ${(showSuggestions && places.length > 0) || isLoading ? 'active' : ''}`}>
 				{isLoading && (
