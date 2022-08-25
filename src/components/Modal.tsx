@@ -1,7 +1,7 @@
 import Button from './Button'
 
 import grats from '../assets/images/grats.gif'
-import { FC, useState } from 'react'
+import { FC } from 'react'
 
 type CustomModal = {
     isActive: boolean
